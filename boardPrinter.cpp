@@ -1,3 +1,5 @@
+/* By Ulysses A. Butler */
+
 #include <ncurses.h>
 
 #include "board.h"
@@ -7,19 +9,10 @@
 #define SIDE "|"
 #define INTER "+"
 
-#define ETOP "   "
-#define ESIDE " "
-#define EINTER " "
-
-inline bool BoardPrinter::isInBounds(size_t r, size_t c)
+BoardPrinter::BoardPrinter(GomokuBoard& b): board(b)
 {
-  return r < board.getHeight() && c < board.getWidth();
-}
-
-BoardPrinter::BoardPrinter(MinesweeperBoard& b): board(b)
-{
-  height = (board.getHeight() * 2) + 1;
-  width = (board.getWidth() * 4) + 1; 
+  height = (board.getSize() * 2) + 1;
+  width = (board.getSize() * 4) + 1; 
 }
 
 int BoardPrinter::getHeight()
@@ -38,66 +31,6 @@ void BoardPrinter::getHeightWidth(int& h, int& w)
   w = width;
 }
 
-char BoardPrinter::getCenter(size_t r, size_t c)
-{
-  if(board.getFlag(r, c))
-    return '>';
-  if(!board.getInit() || !board.isRevealed(r, c))
-    return '.';
-  if(board.checkSquare(r, c))
-    return 'X';
-  if(board.getNum(r, c) == 0)
-    return ' ';
-  
-  return board.getNum(r, c) + '0';
-}
-
-void BoardPrinter::printHelper()
-{
-  // Print intersections
-  for(size_t r = 0; r < (board.getHeight() - 1); r++)
-  {
-    for(size_t c = 0; c < (board.getWidth() - 1); c++)
-    {
-      if(!board.isRevealed(r, c) || !board.isRevealed(r + 1, c) || !board.isRevealed(r, c + 1) || !board.isRevealed(r + 1, c + 1))
-        mvprintw((2 * r) + 2 + row, (4 * c) + 4 + col, INTER);
-      else
-        mvprintw((2 * r) + 2 + row, (4 * c) + 4 + col, EINTER);
-    }
-  }
-
-  // Print middles
-  for(size_t r = 0; r < board.getHeight(); r++)
-  {
-    for(size_t c = 0; c < board.getWidth(); c++)
-      mvprintw((2 * r) + 1 + row, (4 * c) + 2 + col, "%c", getCenter(r, c));
-  }
-
-  // Print sides
-  for(size_t r = 0; r < board.getHeight(); r++)
-  {
-    for(size_t c = 0; c < (board.getWidth() - 1); c++)
-    {
-      if(!board.isRevealed(r, c) || !board.isRevealed(r, c + 1))
-        mvprintw((2 * r) + 1 + row, (4 * c) + 4 + col, SIDE);
-      else
-        mvprintw((2 * r) + 1 + row, (4 * c) + 4 + col, ESIDE);
-    }
-  }
-
-  // Print top and bottom
-  for(size_t r = 0; r < (board.getHeight() - 1); r++)
-  {
-    for(size_t c = 0; c < board.getWidth(); c++)
-    {
-      if(!board.isRevealed(r, c) || !board.isRevealed(r + 1, c))
-        mvprintw((2 * r) + 2 + row, (4 * c) + 1 + col, TOP);
-      else
-        mvprintw((2 * r) + 2 + row, (4 * c) + 1 + col, ETOP);
-    }
-  }
-}
-
 void BoardPrinter::print(int r, int c)
 {
   size_t i;
@@ -107,13 +40,13 @@ void BoardPrinter::print(int r, int c)
   // Print top
   move(row, col);
 
-  for(i = 0; i < board.getWidth(); i++)
+  for(i = 0; i < board.getSize(); i++)
     printw(INTER TOP); 
 
   printw(INTER);
 
   // Print sides
-  for(i = row + 1; i < (2 * board.getHeight()) + (row + 1); i += 2)
+  for(i = row + 1; i < (2 * board.getSize()) + (row + 1); i += 2)
   {
     mvprintw(i, col, SIDE);
     mvprintw(i + 1, col, INTER);
@@ -125,7 +58,7 @@ void BoardPrinter::print(int r, int c)
   // Print bottom
   move(i - 1, col);
 
-  for(i = 0; i < board.getWidth(); i++)
+  for(i = 0; i < board.getSize(); i++)
     printw(INTER TOP);
 
   update(0, 0);
@@ -133,7 +66,7 @@ void BoardPrinter::print(int r, int c)
 
 void BoardPrinter::update(int r, int c)
 {
-  printHelper();
+  mvprintw((2 * r) + 1 + row, (4 * c) + 2 + col, "%c", (board.getSquare(r, c) == x_piece) ? 'x' : 'o');
 
   moveCursor(r, c);
 

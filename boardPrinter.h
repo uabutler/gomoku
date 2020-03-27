@@ -1,46 +1,48 @@
-#ifndef BOARD_H
-#define BOARD_H
+/* By Ulysses A. Butler */
 
-#include <vector>
+#ifndef BOARD_PRINTER_H
+#define BOARD_PRINTER_H
 
-using namespace std;
+/*
+ * This is a helper class to print the minesweeper board.
+ * the board itself is managed by the user, this just prints said
+ * board using ncurses
+ */
 
-class MinesweeperBoard
+#include <ncurses.h>
+
+#include "board.h"
+
+class BoardPrinter
 {
 private:
-  vector<vector<bool>> bombLocations;
-  vector<vector<bool>> revealed;
-  vector<vector<unsigned>> surround;
-  vector<vector<bool>> flagged;
+  GomokuBoard& board;
 
-  size_t height;
-  size_t width;
-  unsigned bombs;
+  int row;
+  int col;
 
-  bool isInit;
-
-  void placeBombs(size_t r, size_t c);
-
-  inline unsigned computeSurroundHelper(size_t r, size_t c);
-  void computeSurround();
+  int height;
+  int width;
 
 public:
-  MinesweeperBoard(size_t h, size_t w, unsigned b);
+  // First, the constructor is initialized with a reference to the
+  // board the user will manage
+  BoardPrinter(GomokuBoard& b);
 
-  size_t getHeight();
-  size_t getWidth();
-  
-  void init(size_t r, size_t c);
-  bool getInit();
-  bool isRevealed(size_t r, size_t c);
-  unsigned getNum(size_t r, size_t c);
-  bool checkSquare(size_t r, size_t c);
-  void reveal(size_t r, size_t c);
-  bool checkWin();
-  void putFlag(size_t r, size_t c);
-  void rmFlag(size_t r, size_t c);
-  void toggleFlag(size_t r, size_t c);
-  bool getFlag(size_t r, size_t c);
+  // The height and width of the printed board. This isn't the same
+  // as the number of squares on the board
+  int getHeight();
+  int getWidth();
+  void getHeightWidth(int& h, int& w);
+
+  // The initial print of the board at the given coordinates
+  void print(int r, int c);
+  // Updates the board and moves the cursor to the given coordinates
+  void update(int r, int c);
+  // Moves the cursor the the given coordinates wihtout updating the
+  // whole board
+  void moveCursor(int r, int c);
 };
 
-#endif // BOARD_H
+#endif // BOARD_PRINTER_H
+
