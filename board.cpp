@@ -109,7 +109,7 @@ void Board::setSquareAt(size_t r, size_t c, square s)
 
   int oldRow = cursorRow, oldCol = cursorCol;
   moveCursor(r, c);
-  printw("%c", center);;
+  printw("%c", center);
   moveCursor(oldRow, oldCol);
 
   board[r][c] = s;
@@ -131,8 +131,7 @@ void Board::update(square s)
   moveCursor(cursorRow, cursorCol);
   printw("%c", center);;
   moveCursor(cursorRow, cursorCol);
-
-  refresh();
+  board[cursorRow][cursorCol] = s;
 }
 
 int Board::getRow()
@@ -189,9 +188,6 @@ void Board::getUserMove(square piece)
       else
         moveCursor(newRow, newCol);
     }
-
-    mvprintw(0, 0, "1");
-    refresh();
 
     if(getSquare() != empty)
       flag = true;
