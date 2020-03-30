@@ -43,8 +43,6 @@ public:
   square getSquareAt(size_t r, size_t c);
   void setSquareAt(size_t r, size_t c, square piece);
 
-  // The initial print of the board at the given coordinates
-  void print(int r, int c);
   // This retrieves the current square
   square getSquare();
   // Updates the board and moves the cursor to the given coordinates

@@ -15,50 +15,13 @@ Board::Board(size_t s): size(s)
   height = (s * 2) + 1;
   width = (s * 4) + 1; 
   board = vector<vector<square>>(s, vector<square>(s, empty));
-}
 
-// Getter
-int Board::getHeight()
-{
-  return height;
-}
+  getmaxyx(stdscr, startRow, startCol);
 
-int Board::getWidth()
-{
-  return width;
-}
+  startRow = (startRow - height) / 2;
+  startCol = (startCol - width) / 2;
 
-size_t Board::getSize()
-{
-  return size;
-}
-
-square Board::getSquareAt(size_t r, size_t c)
-{
-  return board[r][c];
-}
-
-void Board::setSquareAt(size_t r, size_t c, square s)
-{
-  char center;
-
-  if(s == x_piece) center = 'x';
-  if(s == o_piece) center = 'o';
-  if(s == empty) center = ' ';
-
-  int oldRow = cursorRow, oldCol = cursorCol;
-  moveCursor(r, c);
-  printw("%c", center);;
-  moveCursor(oldRow, oldCol);
-
-  board[r][c] = s;
-}
-
-void Board::print(int r, int c)
-{
   size_t i;
-  startRow = r;
-  startCol = c;
 
   // Print top
   move(startRow, startCol);
@@ -112,6 +75,44 @@ void Board::print(int r, int c)
   }
 
   moveCursor(0, 0);
+
+}
+
+// Getter
+int Board::getHeight()
+{
+  return height;
+}
+
+int Board::getWidth()
+{
+  return width;
+}
+
+size_t Board::getSize()
+{
+  return size;
+}
+
+square Board::getSquareAt(size_t r, size_t c)
+{
+  return board[r][c];
+}
+
+void Board::setSquareAt(size_t r, size_t c, square s)
+{
+  char center;
+
+  if(s == x_piece) center = 'x';
+  if(s == o_piece) center = 'o';
+  if(s == empty) center = ' ';
+
+  int oldRow = cursorRow, oldCol = cursorCol;
+  moveCursor(r, c);
+  printw("%c", center);;
+  moveCursor(oldRow, oldCol);
+
+  board[r][c] = s;
 }
 
 square Board::getSquare()
