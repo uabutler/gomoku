@@ -166,11 +166,11 @@ void Board::getUserMove(square piece)
   
   while(flag)
   {
+    flag = false;
     while(((input = getch()) != '\n') && (input != KEY_ENTER))
     {
       int newRow = cursorRow;
       int newCol = cursorCol;
-      flag = false;
 
       if(input == KEY_UP)
         newRow--;
