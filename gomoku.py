@@ -1,6 +1,7 @@
 import curses
-from enum import Enum
 import atexit
+import sys
+from enum import Enum
 
 # The three possibilities for a given square
 class square(Enum):
@@ -23,6 +24,7 @@ class Board:
   # The constructor, takes the size of the board as its argument
   def __init__(self, s):
     self.stdscr = curses.initscr()
+    atexit.register(curses.endwin)
     curses.noecho()
     curses.cbreak()
     self.stdscr.keypad(True)
@@ -31,6 +33,15 @@ class Board:
     self.width = (4 * s) + 1
     self.board = [[square.empty for i in range (s)] for j in range (s)]
     maxrow, maxcol = self.stdscr.getmaxyx()
+    if maxrow < self.height or maxcol < self.width:
+      msg1 = "  ERROR: Screen cannot fit board of this size  "
+      msg2 = "Please resize your terminal or shrink the board"
+      self.stdscr.move((maxrow - 2) // 2, (maxcol - len(msg1)) // 2)
+      self.stdscr.addstr(msg1)
+      self.stdscr.move((maxrow - 2) // 2 + 1, (maxcol - len(msg2)) // 2)
+      self.stdscr.addstr(msg2)
+      self.wait()
+      sys.exit()
     self.startRow = (maxrow - self.height) // 2
     self.startCol = (maxcol - self.width) // 2
     self.stdscr.move(self.startRow, self.startCol)
@@ -144,7 +155,3 @@ class Board:
   # them to pause and view the screen before the program exits.
   def wait(self):
     self.stdscr.getch()
-
-  # This closes out the ncurses session
-  def endwin(self):
-    curses.endwin()
