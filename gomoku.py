@@ -1,3 +1,5 @@
+# Written by Ulysses Butler
+
 import curses
 import atexit
 import sys
